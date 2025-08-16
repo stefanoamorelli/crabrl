@@ -1,0 +1,125 @@
+# Rust
+/target/
+**/*.rs.bk
+*.pdb
+Cargo.lock
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+.venv
+.env
+
+# Virtual environments
+benchmarks/venv/
+**/venv/
+**/virtualenv/
+**/.venv/
+
+# Test data and fixtures
+test_data/
+benchmarks/fixtures/
+fixtures/
+
+# Benchmark outputs
+*.png
+*.json
+benchmark_results/
+benchmarks/*.png
+benchmarks/*.json
+benchmarks/*_results.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+*.o
+*.a
+*.so
+*.dll
+*.exe
+*.out
+
+# Documentation
+/target/doc/
+/target/debug/
+/target/release/
+
+# Logs
+*.log
+logs/
+
+# Coverage
+*.profraw
+*.profdata
+/target/coverage/
+tarpaulin-report.html
+cobertura.xml
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+.cache/
+tmp/
+
+# Large test files
+*.xbrl
+*.xml
+!examples/*.xml
+!tests/fixtures/*.xml
+
+# Downloaded SEC filings
+benchmarks/fixtures/
+scripts/fixtures/
+
+# Benchmark comparison artifacts
+benchmarks/benchmark_results.png
+benchmarks/synthetic_benchmark_chart.png
+benchmarks/real_benchmark_chart.png
+benchmarks/sec_comparison_results.json
+benchmarks/synthetic_benchmark_results.json
+benchmarks/real_benchmark_results.json
+benchmarks/real_filing_results.json
+
+# Python artifacts from benchmarking
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# Backup files
+*.backup
+*.old
+*.orig
+
+# Archives
+*.zip
+*.tar.gz
+*.tar.bz2
+*.7z
+*.rar
+
+# Keep important config examples
+!.gitignore
+!.github/
+!examples/.gitkeep
+!tests/fixtures/.gitkeep
