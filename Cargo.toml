@@ -1,0 +1,64 @@
+[package]
+name = "crabrl"
+version = "0.1.0"
+edition = "2021"
+authors = ["Stefano Amorelli <stefano@amorelli.tech>"]
+description = "High-performance XBRL parser and validator"
+license = "AGPL-3.0"
+repository = "https://github.com/stefanoamorelli/crabrl"
+keywords = ["xbrl", "parser", "finance", "sec", "edgar"]
+categories = ["parser-implementations", "finance", "command-line-utilities"]
+
+[dependencies]
+# Core
+quick-xml = "0.36"
+compact_str = "0.8"
+chrono = "0.4"
+
+# Performance
+ahash = "0.8"
+parking_lot = "0.12"
+rayon = { version = "1.10", optional = true }
+memmap2 = { version = "0.9", optional = true }
+mimalloc = { version = "0.1", default-features = false }
+bitflags = "2.6"
+
+# CLI
+clap = { version = "4.5", features = ["derive"], optional = true }
+colored = { version = "2.1", optional = true }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Error handling
+thiserror = "2.0"
+anyhow = "1.0"
+
+[dev-dependencies]
+criterion = "0.5"
+pretty_assertions = "1.4"
+tempfile = "3.15"
+
+[[bin]]
+name = "crabrl"
+required-features = ["cli"]
+
+[[bench]]
+name = "parser"
+harness = false
+
+[features]
+default = ["cli", "parallel"]
+cli = ["clap", "colored"]
+parallel = ["rayon"]
+mmap = ["memmap2"]
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+opt-level = 3
+strip = true
+
+[profile.bench]
+inherits = "release"
