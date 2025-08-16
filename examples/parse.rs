@@ -1,4 +1,4 @@
-//! Basic parsing example
+//! Parse and display XBRL file info
 
 use crabrl::Parser;
 use std::env;
@@ -12,17 +12,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let parser = Parser::new();
     let doc = parser.parse_file(&args[1])?;
-    
-    println!("Parsed {} successfully", args[1]);
+
+    println!("Parsed {}:", args[1]);
     println!("  Facts: {}", doc.facts.len());
     println!("  Contexts: {}", doc.contexts.len());
     println!("  Units: {}", doc.units.len());
-    
+
     // Show first 5 facts
     let facts_vec: Vec<_> = doc.facts.clone().into();
     for fact in facts_vec.iter().take(5) {
         println!("  - {}: {}", fact.name, fact.value);
     }
-    
+
     Ok(())
 }

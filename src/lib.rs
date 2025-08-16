@@ -56,7 +56,11 @@ impl Validator {
         
         Ok(ValidationResult {
             is_valid,
-            errors: if is_valid { Vec::new() } else { vec!["Validation failed".to_string()] },
+            errors: if is_valid {
+                Vec::new()
+            } else {
+                vec!["Validation failed".to_string()]
+            },
             warnings: Vec::new(),
             stats: ValidationStats {
                 facts_validated: doc.facts.len(),
@@ -102,13 +106,13 @@ pub type Result<T> = std::result::Result<T, Error>;
 pub enum Error {
     #[error("IO error: {0}")]
     Io(#[from] std::io::Error),
-    
+
     #[error("Parse error: {0}")]
     Parse(String),
-    
+
     #[error("Validation error: {0}")]
     Validation(String),
-    
+
     #[error("Not found: {0}")]
     NotFound(String),
 }

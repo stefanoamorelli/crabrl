@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Parse
     let parser = Parser::new();
     let doc = parser.parse_file(&args[1])?;
-    
+
     // Validate
     let validator = Validator::new();
     match validator.validate(&doc) {
@@ -24,6 +24,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             println!("✗ Validation failed: {}", e);
         }
     }
-    
+
     Ok(())
 }
