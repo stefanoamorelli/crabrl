@@ -11,13 +11,12 @@ fn main() {
 
     let filepath = &args[1];
     let parser = Parser::new();
-    
+
     let start = Instant::now();
     match parser.parse_file(filepath) {
         Ok(doc) => {
             let elapsed = start.elapsed();
             let ms = elapsed.as_secs_f64() * 1000.0;
-            
             println!("crabrl found: {} facts, {} contexts, {} units (in {:.3}ms)",
                      doc.facts.len(),
                      doc.contexts.len(),
@@ -38,3 +37,4 @@ fn main() {
         }
     }
 }
+
