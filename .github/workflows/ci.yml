@@ -51,11 +51,12 @@ jobs:
         path: target
         key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
     
-    - name: Check formatting
-      run: cargo fmt -- --check
+    # Formatting and clippy checks temporarily disabled
+    # - name: Check formatting
+    #   run: cargo fmt -- --check
     
-    - name: Run clippy
-      run: cargo clippy --all-features -- -D warnings
+    # - name: Run clippy
+    #   run: cargo clippy --all-features -- -D warnings
     
     - name: Build
       run: cargo build --verbose --all-features

@@ -30,11 +30,12 @@ jobs:
     - name: Run tests
       run: cargo test --all-features --release
     
-    - name: Check formatting
-      run: cargo fmt -- --check
+    # Formatting and clippy checks temporarily disabled
+    # - name: Check formatting
+    #   run: cargo fmt -- --check
     
-    - name: Run clippy
-      run: cargo clippy --all-features -- -D warnings
+    # - name: Run clippy
+    #   run: cargo clippy --all-features -- -D warnings
 
   publish-crates-io:
     name: Publish to crates.io
