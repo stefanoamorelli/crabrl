@@ -71,7 +71,7 @@ impl XbrlValidator {
         // Return error in strict mode if any validation errors
         if self.strict_mode && !validation_errors.is_empty() {
             return Err(Error::Validation(format!(
-                "Validation failed with {} errors", 
+                "Validation failed with {} errors",
                 validation_errors.len()
             )));
         }
