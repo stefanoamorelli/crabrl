@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Amorelli"
+    given-names: "Stefano"
+    email: "stefano@amorelli.tech"
+    orcid: "https://orcid.org/0009-0004-4917-0999"
+title: "crabrl: High-performance XBRL parser for SEC EDGAR filings"
+version: 0.1.0
+date-released: 2025-01-16
+url: "https://github.com/stefanoamorelli/crabrl"
+repository-code: "https://github.com/stefanoamorelli/crabrl"
+license: AGPL-3.0
+keywords:
+  - xbrl
+  - parser
+  - sec-edgar
+  - finance
+  - rust
+abstract: "A high-performance XBRL parser and validator written in Rust, optimized for SEC EDGAR filings. Achieves 50-150x performance gains over traditional parsers through zero-copy parsing, memory-mapped I/O, and Rust's ownership model."
