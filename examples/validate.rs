@@ -16,20 +16,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     
     // Validate
     let validator = Validator::new();
-    let result = validator.validate(&doc)?;
-    
-    if result.is_valid {
-        println!("✓ Document is valid");
-    } else {
-        println!("✗ Document has {} errors", result.errors.len());
-        for error in result.errors.iter().take(5) {
-            println!("  - {}", error);
+    match validator.validate(&doc) {
+        Ok(_) => {
+            println!("✓ Document is valid");
+        }
+        Err(e) => {
+            println!("✗ Validation failed: {}", e);
         }
     }
-    
-    println!("\nValidation stats:");
-    println!("  Facts validated: {}", result.stats.facts_validated);
-    println!("  Time: {}ms", result.stats.duration_ms);
     
     Ok(())
 }

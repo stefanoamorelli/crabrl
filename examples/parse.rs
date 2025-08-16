@@ -19,7 +19,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("  Units: {}", doc.units.len());
     
     // Show first 5 facts
-    for fact in doc.facts.iter().take(5) {
+    let facts_vec: Vec<_> = doc.facts.clone().into();
+    for fact in facts_vec.iter().take(5) {
         println!("  - {}: {}", fact.name, fact.value);
     }
     

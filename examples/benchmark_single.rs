@@ -17,7 +17,7 @@ fn main() {
     let parser = Parser::new();
     let start = Instant::now();
     
-    match parser.parse(&content) {
+    match parser.parse_bytes(&content) {
         Ok(document) => {
             let elapsed = start.elapsed();
             println!("Parsed in {:.3}ms: {} facts, {} contexts, {} units",
