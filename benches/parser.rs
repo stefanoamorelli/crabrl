@@ -1,5 +1,5 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use crabrl::Parser;
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 fn parse_small_file(c: &mut Criterion) {
     let parser = Parser::new();
@@ -21,4 +21,3 @@ fn parse_medium_file(c: &mut Criterion) {
 
 criterion_group!(benches, parse_small_file, parse_medium_file);
 criterion_main!(benches);
-

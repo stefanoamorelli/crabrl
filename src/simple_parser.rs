@@ -15,29 +15,28 @@ impl Parser {
             load_linkbases: false,
         }
     }
-    
+
     pub fn parse_file<P: AsRef<Path>>(&self, path: P) -> Result<Document> {
         let content = std::fs::read(path)?;
         self.parse_bytes(&content)
     }
-    
+
     pub fn parse_bytes(&self, data: &[u8]) -> Result<Document> {
         // Simple XML parsing - just count elements for now
         let text = String::from_utf8_lossy(data);
-        
+
         // Count facts (very simplified)
-        let fact_count = text.matches("<us-gaap:").count() + 
-                        text.matches("<dei:").count() +
-                        text.matches("<ifrs:").count();
-        
+        let fact_count = text.matches("<us-gaap:").count()
+            + text.matches("<dei:").count()
+            + text.matches("<ifrs:").count();
+
         // Count contexts
-        let context_count = text.matches("<context ").count() + 
-                           text.matches("<xbrli:context").count();
-        
-        // Count units  
-        let unit_count = text.matches("<unit ").count() +
-                        text.matches("<xbrli:unit").count();
-        
+        let context_count =
+            text.matches("<context ").count() + text.matches("<xbrli:context").count();
+
+        // Count units
+        let unit_count = text.matches("<unit ").count() + text.matches("<xbrli:unit").count();
+
         // Create dummy document with approximate counts
         let mut doc = Document {
             facts: FactStorage {
@@ -65,7 +64,7 @@ impl Parser {
             dimensions: Vec::new(),
             concept_names: Vec::new(),
         };
-        
+
         // Add dummy contexts
         for i in 0..context_count {
             doc.contexts.push(Context {
@@ -81,7 +80,7 @@ impl Parser {
                 scenario: None,
             });
         }
-        
+
         // Add dummy units
         for i in 0..unit_count {
             doc.units.push(Unit {
@@ -92,7 +91,7 @@ impl Parser {
                 }]),
             });
         }
-        
+
         Ok(doc)
     }
 }

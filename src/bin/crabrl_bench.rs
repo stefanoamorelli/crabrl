@@ -17,12 +17,14 @@ fn main() {
         Ok(doc) => {
             let elapsed = start.elapsed();
             let ms = elapsed.as_secs_f64() * 1000.0;
-            println!("crabrl found: {} facts, {} contexts, {} units (in {:.3}ms)",
-                     doc.facts.len(),
-                     doc.contexts.len(),
-                     doc.units.len(),
-                     ms);
-            
+            println!(
+                "crabrl found: {} facts, {} contexts, {} units (in {:.3}ms)",
+                doc.facts.len(),
+                doc.contexts.len(),
+                doc.units.len(),
+                ms
+            );
+
             // Additional stats
             println!("Facts: {}", doc.facts.len());
             println!("Contexts: {}", doc.contexts.len());
@@ -37,5 +39,3 @@ fn main() {
         }
     }
 }
-
-

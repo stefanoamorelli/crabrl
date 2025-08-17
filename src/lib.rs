@@ -10,7 +10,7 @@ pub mod validator;
 pub use simple_parser::Parser;
 
 // Re-export main types
-pub use model::{Document, Fact, Context, Unit};
+pub use model::{Context, Document, Fact, Unit};
 
 // Create validator wrapper for the CLI
 pub struct Validator {
@@ -47,13 +47,13 @@ impl Validator {
 
     pub fn validate(&self, doc: &Document) -> Result<ValidationResult> {
         let start = std::time::Instant::now();
-        
+
         // Clone doc for validation (validator mutates it)
         let mut doc_copy = doc.clone();
-        
+
         // Run validation
         let is_valid = self.inner.validate(&mut doc_copy).is_ok();
-        
+
         Ok(ValidationResult {
             is_valid,
             errors: if is_valid {

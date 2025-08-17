@@ -5,7 +5,6 @@ use std::collections::HashMap;
 // Core XBRL Data Structures - Full Specification Support
 // ============================================================================
 
-
 #[repr(C, align(64))]
 #[derive(Clone)]
 pub struct FactStorage {
@@ -111,8 +110,13 @@ pub struct Scenario {
 // Period with forever support
 #[derive(Debug, Clone)]
 pub enum Period {
-    Instant { date: CompactString },
-    Duration { start: CompactString, end: CompactString },
+    Instant {
+        date: CompactString,
+    },
+    Duration {
+        start: CompactString,
+        end: CompactString,
+    },
     Forever,
 }
 
@@ -347,6 +351,3 @@ impl Document {
         }
     }
 }
-
-
-

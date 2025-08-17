@@ -1,15 +1,33 @@
 // Comprehensive XBRL validation
-use crate::{model::*, Result, Error};
+use crate::{model::*, Error, Result};
 use std::collections::HashSet;
 
 #[derive(Debug, Clone)]
 pub enum ValidationError {
-    InvalidContextRef { fact_index: usize, context_id: u16 },
-    InvalidUnitRef { fact_index: usize, unit_id: u16 },
-    CalculationInconsistency { concept: String, expected: f64, actual: f64 },
-    InvalidDataType { concept: String, expected_type: String, actual_value: String },
-    MissingRequiredElement { element: String },
-    DuplicateId { id: String },
+    InvalidContextRef {
+        fact_index: usize,
+        context_id: u16,
+    },
+    InvalidUnitRef {
+        fact_index: usize,
+        unit_id: u16,
+    },
+    CalculationInconsistency {
+        concept: String,
+        expected: f64,
+        actual: f64,
+    },
+    InvalidDataType {
+        concept: String,
+        expected_type: String,
+        actual_value: String,
+    },
+    MissingRequiredElement {
+        element: String,
+    },
+    DuplicateId {
+        id: String,
+    },
 }
 
 pub struct XbrlValidator {
@@ -49,7 +67,7 @@ impl XbrlValidator {
 
     pub fn validate(&self, doc: &mut Document) -> Result<()> {
         let mut validation_errors = Vec::new();
-        
+
         // Context validation
         if self.check_contexts {
             validation_errors.extend(self.validate_contexts(doc));
@@ -82,7 +100,7 @@ impl XbrlValidator {
     fn validate_contexts(&self, doc: &Document) -> Vec<ValidationError> {
         let mut errors = Vec::new();
         let mut context_ids = HashSet::new();
-        
+
         for ctx in &doc.contexts {
             // Check for duplicate context IDs
             if !context_ids.insert(ctx.id.clone()) {
@@ -112,14 +130,14 @@ impl XbrlValidator {
                 _ => {}
             }
         }
-        
+
         errors
     }
 
     fn validate_units(&self, doc: &Document) -> Vec<ValidationError> {
         let mut errors = Vec::new();
         let mut unit_ids = HashSet::new();
-        
+
         for unit in &doc.units {
             // Check for duplicate unit IDs
             if !unit_ids.insert(unit.id.clone()) {
@@ -137,7 +155,10 @@ impl XbrlValidator {
                         });
                     }
                 }
-                UnitType::Divide { numerator, denominator } => {
+                UnitType::Divide {
+                    numerator,
+                    denominator,
+                } => {
                     if numerator.is_empty() || denominator.is_empty() {
                         errors.push(ValidationError::MissingRequiredElement {
                             element: format!("Numerator/denominator for unit {}", unit.id),
@@ -153,13 +174,13 @@ impl XbrlValidator {
                 }
             }
         }
-        
+
         errors
     }
 
     fn validate_facts(&self, doc: &Document) -> Vec<ValidationError> {
         let mut errors = Vec::new();
-        
+
         // Validate fact references
         for i in 0..doc.facts.len() {
             if i < doc.facts.context_ids.len() {
@@ -171,7 +192,7 @@ impl XbrlValidator {
                     });
                 }
             }
-            
+
             if i < doc.facts.unit_ids.len() {
                 let unit_id = doc.facts.unit_ids[i];
                 if unit_id > 0 && unit_id as usize > doc.units.len() {
@@ -182,14 +203,14 @@ impl XbrlValidator {
                 }
             }
         }
-        
+
         errors
     }
 
     fn check_duplicate_facts(&self, doc: &Document) -> Vec<ValidationError> {
         let mut errors = Vec::new();
         let mut fact_keys = HashSet::new();
-        
+
         for i in 0..doc.facts.len() {
             if i < doc.facts.concept_ids.len() && i < doc.facts.context_ids.len() {
                 let key = (doc.facts.concept_ids[i], doc.facts.context_ids[i]);
@@ -200,7 +221,7 @@ impl XbrlValidator {
                 }
             }
         }
-        
+
         errors
     }
 }
@@ -227,16 +248,16 @@ impl ValidationContext {
         }
     }
 
-    pub fn add_rule<F>(&mut self, rule: F) 
+    pub fn add_rule<F>(&mut self, rule: F)
     where
-        F: Fn(&Document) -> Vec<ValidationError> + 'static
+        F: Fn(&Document) -> Vec<ValidationError> + 'static,
     {
         self.custom_rules.push(Box::new(rule));
     }
 
     pub fn validate(&self, doc: &Document) -> Vec<ValidationError> {
         let mut errors = Vec::new();
-        
+
         // Apply profile-specific rules
         match self.profile {
             ValidationProfile::SecEdgar => {
@@ -247,12 +268,12 @@ impl ValidationContext {
             }
             _ => {}
         }
-        
+
         // Apply custom rules
         for rule in &self.custom_rules {
             errors.extend(rule(doc));
         }
-        
+
         errors
     }
 }
@@ -260,19 +281,21 @@ impl ValidationContext {
 // SEC EDGAR specific validation rules
 pub fn sec_validation_rules(doc: &Document) -> Vec<ValidationError> {
     let mut errors = Vec::new();
-    
+
     // Check for required DEI contexts
     let mut has_current_period = false;
     let mut has_entity_info = false;
     let mut has_dei_elements = false;
-    
+
     for ctx in &doc.contexts {
         // Check for current period context
-        if ctx.id.contains("CurrentYear") || ctx.id.contains("CurrentPeriod") || 
-           ctx.id.contains("DocumentPeriodEndDate") {
+        if ctx.id.contains("CurrentYear")
+            || ctx.id.contains("CurrentPeriod")
+            || ctx.id.contains("DocumentPeriodEndDate")
+        {
             has_current_period = true;
         }
-        
+
         // Validate CIK format (10 digits)
         if ctx.entity.scheme.contains("sec.gov/CIK") {
             has_entity_info = true;
@@ -286,37 +309,39 @@ pub fn sec_validation_rules(doc: &Document) -> Vec<ValidationError> {
             }
         }
     }
-    
+
     // Check for DEI elements in facts
     for i in 0..doc.facts.concept_ids.len() {
         if i < doc.concept_names.len() {
             let concept = &doc.concept_names[i];
-            if concept.contains("dei:") || concept.contains("DocumentType") || 
-               concept.contains("EntityRegistrantName") {
+            if concept.contains("dei:")
+                || concept.contains("DocumentType")
+                || concept.contains("EntityRegistrantName")
+            {
                 has_dei_elements = true;
             }
         }
     }
-    
+
     // Required elements validation
     if !has_current_period {
         errors.push(ValidationError::MissingRequiredElement {
             element: "Current period context required for SEC filing".to_string(),
         });
     }
-    
+
     if !has_entity_info {
         errors.push(ValidationError::MissingRequiredElement {
             element: "Entity CIK information required for SEC filing".to_string(),
         });
     }
-    
+
     if !has_dei_elements {
         errors.push(ValidationError::MissingRequiredElement {
             element: "DEI (Document and Entity Information) elements required".to_string(),
         });
     }
-    
+
     // Validate segment reporting if present
     for ctx in &doc.contexts {
         if let Some(segment) = &ctx.entity.segment {
@@ -332,7 +357,7 @@ pub fn sec_validation_rules(doc: &Document) -> Vec<ValidationError> {
             }
         }
     }
-    
+
     // Validate calculation consistency for monetary items
     let mut monetary_facts: Vec<(usize, f64)> = Vec::new();
     for i in 0..doc.facts.len() {
@@ -352,7 +377,7 @@ pub fn sec_validation_rules(doc: &Document) -> Vec<ValidationError> {
             }
         }
     }
-    
+
     // Basic calculation validation - check for reasonable values
     for (idx, value) in monetary_facts {
         if value.is_nan() || value.is_infinite() {
@@ -371,27 +396,29 @@ pub fn sec_validation_rules(doc: &Document) -> Vec<ValidationError> {
             });
         }
     }
-    
+
     errors
 }
 
-// IFRS specific validation rules  
+// IFRS specific validation rules
 pub fn ifrs_validation_rules(doc: &Document) -> Vec<ValidationError> {
     let mut errors = Vec::new();
-    
+
     // Check for IFRS-required contexts
     let mut has_reporting_period = false;
     let mut has_comparative_period = false;
     let mut has_entity_info = false;
-    
+
     for ctx in &doc.contexts {
         // Check for reporting period
         match &ctx.period {
             Period::Duration { start, end: _ } => {
                 has_reporting_period = true;
                 // IFRS requires comparative information
-                if start.contains("PY") || ctx.id.contains("PriorYear") || 
-                   ctx.id.contains("Comparative") {
+                if start.contains("PY")
+                    || ctx.id.contains("PriorYear")
+                    || ctx.id.contains("Comparative")
+                {
                     has_comparative_period = true;
                 }
             }
@@ -402,32 +429,32 @@ pub fn ifrs_validation_rules(doc: &Document) -> Vec<ValidationError> {
             }
             _ => {}
         }
-        
+
         // Validate entity information
         if !ctx.entity.identifier.is_empty() {
             has_entity_info = true;
         }
     }
-    
+
     // Required contexts validation
     if !has_reporting_period {
         errors.push(ValidationError::MissingRequiredElement {
             element: "Reporting period required for IFRS filing".to_string(),
         });
     }
-    
+
     if !has_comparative_period {
         errors.push(ValidationError::MissingRequiredElement {
             element: "Comparative period information required by IFRS".to_string(),
         });
     }
-    
+
     if !has_entity_info {
         errors.push(ValidationError::MissingRequiredElement {
             element: "Entity identification required for IFRS filing".to_string(),
         });
     }
-    
+
     // Validate dimensional structure
     let mut dimension_validations = Vec::new();
     for ctx in &doc.contexts {
@@ -436,7 +463,8 @@ pub fn ifrs_validation_rules(doc: &Document) -> Vec<ValidationError> {
             for member in &segment.explicit_members {
                 // IFRS dimensions should follow specific patterns
                 if !member.dimension.contains(":") {
-                    dimension_validations.push(format!("Invalid dimension format: {}", member.dimension));
+                    dimension_validations
+                        .push(format!("Invalid dimension format: {}", member.dimension));
                 }
                 if member.dimension.contains("ifrs") || member.dimension.contains("ifrs-full") {
                     // Valid IFRS dimension
@@ -449,7 +477,7 @@ pub fn ifrs_validation_rules(doc: &Document) -> Vec<ValidationError> {
                     }
                 }
             }
-            
+
             // Check typed members for IFRS compliance
             for typed in &segment.typed_members {
                 if typed.dimension.contains("ifrs") && typed.value.is_empty() {
@@ -461,7 +489,7 @@ pub fn ifrs_validation_rules(doc: &Document) -> Vec<ValidationError> {
                 }
             }
         }
-        
+
         // Check scenario dimensions (alternative to segment)
         if let Some(scenario) = &ctx.scenario {
             for member in &scenario.explicit_members {
@@ -475,61 +503,67 @@ pub fn ifrs_validation_rules(doc: &Document) -> Vec<ValidationError> {
             }
         }
     }
-    
+
     // Check for mandatory IFRS disclosures in facts
     let mut has_financial_position = false;
     let mut has_comprehensive_income = false;
     let mut has_cash_flows = false;
     let mut has_changes_in_equity = false;
-    
+
     for i in 0..doc.concept_names.len() {
         let concept = &doc.concept_names[i];
         let lower = concept.to_lowercase();
-        
-        if lower.contains("financialposition") || lower.contains("balancesheet") || 
-           lower.contains("assets") || lower.contains("liabilities") {
+
+        if lower.contains("financialposition")
+            || lower.contains("balancesheet")
+            || lower.contains("assets")
+            || lower.contains("liabilities")
+        {
             has_financial_position = true;
         }
-        
-        if lower.contains("comprehensiveincome") || lower.contains("profitorloss") || 
-           lower.contains("income") || lower.contains("revenue") {
+
+        if lower.contains("comprehensiveincome")
+            || lower.contains("profitorloss")
+            || lower.contains("income")
+            || lower.contains("revenue")
+        {
             has_comprehensive_income = true;
         }
-        
+
         if lower.contains("cashflow") || lower.contains("cashflows") {
             has_cash_flows = true;
         }
-        
+
         if lower.contains("changesinequity") || lower.contains("equity") {
             has_changes_in_equity = true;
         }
     }
-    
+
     // Validate mandatory statements
     if !has_financial_position {
         errors.push(ValidationError::MissingRequiredElement {
             element: "Statement of Financial Position required by IFRS".to_string(),
         });
     }
-    
+
     if !has_comprehensive_income {
         errors.push(ValidationError::MissingRequiredElement {
             element: "Statement of Comprehensive Income required by IFRS".to_string(),
         });
     }
-    
+
     if !has_cash_flows {
         errors.push(ValidationError::MissingRequiredElement {
             element: "Statement of Cash Flows required by IFRS".to_string(),
         });
     }
-    
+
     if !has_changes_in_equity {
         errors.push(ValidationError::MissingRequiredElement {
             element: "Statement of Changes in Equity required by IFRS".to_string(),
         });
     }
-    
+
     // Validate presentation linkbase relationships
     for link in &doc.presentation_links {
         // Check order is valid (typically 1.0 to 999.0)
@@ -541,7 +575,7 @@ pub fn ifrs_validation_rules(doc: &Document) -> Vec<ValidationError> {
             });
         }
     }
-    
+
     // Validate calculation relationships
     for link in &doc.calculation_links {
         // Check weight is reasonable (-1.0 or 1.0 typically)
@@ -556,6 +590,6 @@ pub fn ifrs_validation_rules(doc: &Document) -> Vec<ValidationError> {
             }
         }
     }
-    
+
     errors
 }
