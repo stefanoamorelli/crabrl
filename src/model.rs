@@ -109,13 +109,8 @@ pub struct Scenario {
 // Period with forever support
 #[derive(Debug, Clone)]
 pub enum Period {
-    Instant {
-        date: String,
-    },
-    Duration {
-        start: String,
-        end: String,
-    },
+    Instant { date: String },
+    Duration { start: String, end: String },
     Forever,
 }
 

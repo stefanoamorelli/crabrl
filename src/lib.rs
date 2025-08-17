@@ -80,7 +80,6 @@ impl ValidationConfig {
     }
 }
 
-
 /// Simple validation result for CLI
 pub struct ValidationResult {
     pub is_valid: bool,
