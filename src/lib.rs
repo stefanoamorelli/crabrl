@@ -13,6 +13,7 @@ pub use simple_parser::Parser;
 pub use model::{Context, Document, Fact, Unit};
 
 // Create validator wrapper for the CLI
+#[derive(Default)]
 pub struct Validator {
     inner: validator::XbrlValidator,
     #[allow(dead_code)]
@@ -21,10 +22,7 @@ pub struct Validator {
 
 impl Validator {
     pub fn new() -> Self {
-        Self {
-            inner: validator::XbrlValidator::new(),
-            strict: false,
-        }
+        Self::default()
     }
 
     pub fn with_config(config: ValidationConfig) -> Self {
@@ -71,6 +69,7 @@ impl Validator {
 }
 
 /// Simple validation config for CLI
+#[derive(Default)]
 pub struct ValidationConfig {
     pub strict: bool,
 }
@@ -81,11 +80,6 @@ impl ValidationConfig {
     }
 }
 
-impl Default for ValidationConfig {
-    fn default() -> Self {
-        Self { strict: false }
-    }
-}
 
 /// Simple validation result for CLI
 pub struct ValidationResult {

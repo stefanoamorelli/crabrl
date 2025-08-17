@@ -1,9 +1,9 @@
 //! Simple working XBRL parser
 
 use crate::{model::*, Result};
-use compact_str::CompactString;
 use std::path::Path;
 
+#[derive(Default)]
 pub struct Parser {
     #[allow(dead_code)]
     load_linkbases: bool,
@@ -11,9 +11,7 @@ pub struct Parser {
 
 impl Parser {
     pub fn new() -> Self {
-        Self {
-            load_linkbases: false,
-        }
+        Self::default()
     }
 
     pub fn parse_file<P: AsRef<Path>>(&self, path: P) -> Result<Document> {
@@ -43,7 +41,7 @@ impl Parser {
                 concept_ids: vec![0; fact_count],
                 context_ids: vec![0; fact_count],
                 unit_ids: vec![0; fact_count],
-                values: vec![FactValue::Text(CompactString::new("")); fact_count],
+                values: vec![FactValue::Text(String::from("")); fact_count],
                 decimals: vec![None; fact_count],
                 ids: vec![None; fact_count],
                 footnote_refs: vec![],
@@ -68,14 +66,14 @@ impl Parser {
         // Add dummy contexts
         for i in 0..context_count {
             doc.contexts.push(Context {
-                id: CompactString::new(&format!("ctx{}", i)),
+                id: String::from(&format!("ctx{}", i)),
                 entity: Entity {
-                    identifier: CompactString::new("0000000000"),
-                    scheme: CompactString::new("http://www.sec.gov/CIK"),
+                    identifier: String::from("0000000000"),
+                    scheme: String::from("http://www.sec.gov/CIK"),
                     segment: None,
                 },
                 period: Period::Instant {
-                    date: CompactString::new("2023-12-31"),
+                    date: String::from("2023-12-31"),
                 },
                 scenario: None,
             });
@@ -84,10 +82,10 @@ impl Parser {
         // Add dummy units
         for i in 0..unit_count {
             doc.units.push(Unit {
-                id: CompactString::new(&format!("unit{}", i)),
+                id: String::from(&format!("unit{}", i)),
                 unit_type: UnitType::Simple(vec![Measure {
-                    namespace: CompactString::new("iso4217"),
-                    name: CompactString::new("USD"),
+                    namespace: String::from("iso4217"),
+                    name: String::from("USD"),
                 }]),
             });
         }

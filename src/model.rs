@@ -1,4 +1,3 @@
-use compact_str::CompactString;
 use std::collections::HashMap;
 
 // ============================================================================
@@ -13,18 +12,18 @@ pub struct FactStorage {
     pub unit_ids: Vec<u16>,
     pub values: Vec<FactValue>,
     pub decimals: Vec<Option<i8>>,
-    pub ids: Vec<Option<CompactString>>,
-    pub footnote_refs: Vec<Vec<CompactString>>,
+    pub ids: Vec<Option<String>>,
+    pub footnote_refs: Vec<Vec<String>>,
 }
 
 #[derive(Debug, Clone)]
 pub enum FactValue {
-    Text(CompactString),
+    Text(String),
     Decimal(f64),
     Integer(i64),
     Boolean(bool),
-    Date(CompactString),
-    DateTime(CompactString),
+    Date(String),
+    DateTime(String),
     Nil,
 }
 
@@ -54,22 +53,22 @@ impl FactStorage {
 // Full fact representation with all XBRL features
 #[derive(Debug, Clone)]
 pub struct Fact {
-    pub id: Option<CompactString>,
-    pub concept: CompactString,
-    pub context_ref: CompactString,
-    pub unit_ref: Option<CompactString>,
+    pub id: Option<String>,
+    pub concept: String,
+    pub context_ref: String,
+    pub unit_ref: Option<String>,
     pub value: String,
     pub decimals: Option<i8>,
     pub precision: Option<u8>,
     pub nil: bool,
-    pub nil_reason: Option<CompactString>,
-    pub footnote_refs: Vec<CompactString>,
+    pub nil_reason: Option<String>,
+    pub footnote_refs: Vec<String>,
 }
 
 // Context with full dimension support
 #[derive(Debug, Clone)]
 pub struct Context {
-    pub id: CompactString,
+    pub id: String,
     pub entity: Entity,
     pub period: Period,
     pub scenario: Option<Scenario>,
@@ -77,8 +76,8 @@ pub struct Context {
 
 #[derive(Debug, Clone)]
 pub struct Entity {
-    pub identifier: CompactString,
-    pub scheme: CompactString,
+    pub identifier: String,
+    pub scheme: String,
     pub segment: Option<Segment>,
 }
 
@@ -91,13 +90,13 @@ pub struct Segment {
 
 #[derive(Debug, Clone)]
 pub struct DimensionMember {
-    pub dimension: CompactString,
-    pub member: CompactString,
+    pub dimension: String,
+    pub member: String,
 }
 
 #[derive(Debug, Clone)]
 pub struct TypedMember {
-    pub dimension: CompactString,
+    pub dimension: String,
     pub value: String, // XML content
 }
 
@@ -111,11 +110,11 @@ pub struct Scenario {
 #[derive(Debug, Clone)]
 pub enum Period {
     Instant {
-        date: CompactString,
+        date: String,
     },
     Duration {
-        start: CompactString,
-        end: CompactString,
+        start: String,
+        end: String,
     },
     Forever,
 }
@@ -123,7 +122,7 @@ pub enum Period {
 // Complex unit support with divide/multiply
 #[derive(Debug, Clone)]
 pub struct Unit {
-    pub id: CompactString,
+    pub id: String,
     pub unit_type: UnitType,
 }
 
@@ -139,15 +138,15 @@ pub enum UnitType {
 
 #[derive(Debug, Clone)]
 pub struct Measure {
-    pub namespace: CompactString,
-    pub name: CompactString,
+    pub namespace: String,
+    pub name: String,
 }
 
 // Tuple support for structured data
 #[derive(Debug, Clone)]
 pub struct Tuple {
-    pub id: Option<CompactString>,
-    pub name: CompactString,
+    pub id: Option<String>,
+    pub name: String,
     pub facts: Vec<FactOrTuple>,
 }
 
@@ -160,11 +159,11 @@ pub enum FactOrTuple {
 // Footnote support
 #[derive(Debug, Clone)]
 pub struct Footnote {
-    pub id: CompactString,
-    pub role: Option<CompactString>,
-    pub lang: Option<CompactString>,
+    pub id: String,
+    pub role: Option<String>,
+    pub lang: Option<String>,
     pub content: String,
-    pub fact_refs: Vec<CompactString>,
+    pub fact_refs: Vec<String>,
 }
 
 // Fraction support
@@ -177,27 +176,27 @@ pub struct FractionValue {
 // Schema and taxonomy support
 #[derive(Debug, Clone)]
 pub struct Schema {
-    pub target_namespace: CompactString,
-    pub elements: HashMap<CompactString, SchemaElement>,
-    pub types: HashMap<CompactString, SchemaType>,
+    pub target_namespace: String,
+    pub elements: HashMap<String, SchemaElement>,
+    pub types: HashMap<String, SchemaType>,
     pub imports: Vec<SchemaImport>,
 }
 
 #[derive(Debug, Clone)]
 pub struct SchemaElement {
-    pub name: CompactString,
-    pub element_type: CompactString,
-    pub substitution_group: Option<CompactString>,
-    pub period_type: Option<CompactString>,
-    pub balance: Option<CompactString>,
+    pub name: String,
+    pub element_type: String,
+    pub substitution_group: Option<String>,
+    pub period_type: Option<String>,
+    pub balance: Option<String>,
     pub abstract_element: bool,
     pub nillable: bool,
 }
 
 #[derive(Debug, Clone)]
 pub struct SchemaType {
-    pub name: CompactString,
-    pub base_type: Option<CompactString>,
+    pub name: String,
+    pub base_type: Option<String>,
     pub restrictions: Vec<TypeRestriction>,
 }
 
@@ -216,14 +215,14 @@ pub enum TypeRestriction {
 
 #[derive(Debug, Clone)]
 pub struct SchemaImport {
-    pub namespace: CompactString,
-    pub schema_location: CompactString,
+    pub namespace: String,
+    pub schema_location: String,
 }
 
 // Linkbase support
 #[derive(Debug, Clone)]
 pub struct Linkbase {
-    pub role: CompactString,
+    pub role: String,
     pub links: Vec<Link>,
 }
 
@@ -238,47 +237,47 @@ pub enum Link {
 
 #[derive(Debug, Clone)]
 pub struct PresentationLink {
-    pub from: CompactString,
-    pub to: CompactString,
+    pub from: String,
+    pub to: String,
     pub order: f32,
     pub priority: Option<i32>,
-    pub use_attribute: Option<CompactString>,
+    pub use_attribute: Option<String>,
 }
 
 #[derive(Debug, Clone)]
 pub struct CalculationLink {
-    pub from: CompactString,
-    pub to: CompactString,
+    pub from: String,
+    pub to: String,
     pub weight: f64,
     pub order: f32,
 }
 
 #[derive(Debug, Clone)]
 pub struct DefinitionLink {
-    pub from: CompactString,
-    pub to: CompactString,
-    pub arcrole: CompactString,
+    pub from: String,
+    pub to: String,
+    pub arcrole: String,
     pub order: f32,
 }
 
 #[derive(Debug, Clone)]
 pub struct LabelLink {
-    pub concept: CompactString,
-    pub label: CompactString,
-    pub role: CompactString,
-    pub lang: CompactString,
+    pub concept: String,
+    pub label: String,
+    pub role: String,
+    pub lang: String,
 }
 
 #[derive(Debug, Clone)]
 pub struct ReferenceLink {
-    pub concept: CompactString,
+    pub concept: String,
     pub reference: Reference,
 }
 
 #[derive(Debug, Clone)]
 pub struct Reference {
-    pub role: CompactString,
-    pub parts: HashMap<CompactString, String>,
+    pub role: String,
+    pub parts: HashMap<String, String>,
 }
 
 // Main document structure with full XBRL support
@@ -295,11 +294,11 @@ pub struct Document {
     pub label_links: Vec<LabelLink>,
     pub reference_links: Vec<ReferenceLink>,
     pub custom_links: Vec<Link>,
-    pub role_types: Vec<CompactString>,
-    pub arcrole_types: Vec<CompactString>,
+    pub role_types: Vec<String>,
+    pub arcrole_types: Vec<String>,
     pub schemas: Vec<Schema>,
     pub dimensions: Vec<DimensionMember>,
-    pub concept_names: Vec<CompactString>,
+    pub concept_names: Vec<String>,
 }
 
 impl Default for Document {

@@ -42,8 +42,8 @@ pub struct XbrlValidator {
     decimal_tolerance: f64,
 }
 
-impl XbrlValidator {
-    pub fn new() -> Self {
+impl Default for XbrlValidator {
+    fn default() -> Self {
         Self {
             strict_mode: false,
             check_calculations: true,
@@ -53,6 +53,12 @@ impl XbrlValidator {
             check_datatypes: true,
             decimal_tolerance: 0.01,
         }
+    }
+}
+
+impl XbrlValidator {
+    pub fn new() -> Self {
+        Self::default()
     }
 
     pub fn strict(mut self) -> Self {
@@ -117,17 +123,14 @@ impl XbrlValidator {
             }
 
             // Validate period
-            match &ctx.period {
-                Period::Duration { start, end } => {
-                    if start > end {
-                        errors.push(ValidationError::InvalidDataType {
-                            concept: format!("context_{}", ctx.id),
-                            expected_type: "valid period".to_string(),
-                            actual_value: format!("start {} > end {}", start, end),
-                        });
-                    }
+            if let Period::Duration { start, end } = &ctx.period {
+                if start > end {
+                    errors.push(ValidationError::InvalidDataType {
+                        concept: format!("context_{}", ctx.id),
+                        expected_type: "valid period".to_string(),
+                        actual_value: format!("start {} > end {}", start, end),
+                    });
                 }
-                _ => {}
             }
         }
 
@@ -226,10 +229,13 @@ impl XbrlValidator {
     }
 }
 
+// Type alias for validation rules
+type ValidationRule = Box<dyn Fn(&Document) -> Vec<ValidationError>>;
+
 // Validation context and rules
 pub struct ValidationContext {
     pub profile: ValidationProfile,
-    pub custom_rules: Vec<Box<dyn Fn(&Document) -> Vec<ValidationError>>>,
+    pub custom_rules: Vec<ValidationRule>,
 }
 
 #[derive(Debug, Clone, Copy)]
