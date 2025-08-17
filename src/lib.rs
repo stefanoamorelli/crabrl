@@ -102,17 +102,29 @@ pub struct ValidationStats {
 
 pub type Result<T> = std::result::Result<T, Error>;
 
-#[derive(Debug, thiserror::Error)]
+#[derive(Debug)]
 pub enum Error {
-    #[error("IO error: {0}")]
-    Io(#[from] std::io::Error),
-
-    #[error("Parse error: {0}")]
+    Io(std::io::Error),
     Parse(String),
-
-    #[error("Validation error: {0}")]
     Validation(String),
-
-    #[error("Not found: {0}")]
     NotFound(String),
+}
+
+impl std::fmt::Display for Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Error::Io(e) => write!(f, "IO error: {}", e),
+            Error::Parse(s) => write!(f, "Parse error: {}", s),
+            Error::Validation(s) => write!(f, "Validation error: {}", s),
+            Error::NotFound(s) => write!(f, "Not found: {}", s),
+        }
+    }
+}
+
+impl std::error::Error for Error {}
+
+impl From<std::io::Error> for Error {
+    fn from(err: std::io::Error) -> Self {
+        Error::Io(err)
+    }
 }
