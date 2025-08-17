@@ -1,5 +1,5 @@
 //! crabrl - High-performance XBRL parser and validator
-//! 
+//!
 //! Licensed under AGPL-3.0
 
 pub mod model;
@@ -26,7 +26,7 @@ impl Validator {
             strict: false,
         }
     }
-    
+
     pub fn with_config(config: ValidationConfig) -> Self {
         let mut inner = validator::XbrlValidator::new();
         if config.strict {
@@ -37,14 +37,14 @@ impl Validator {
             strict: config.strict,
         }
     }
-    
+
     pub fn sec_edgar() -> Self {
         Self {
             inner: validator::XbrlValidator::new().strict(),
             strict: true,
         }
     }
-    
+
     pub fn validate(&self, doc: &Document) -> Result<ValidationResult> {
         let start = std::time::Instant::now();
         
