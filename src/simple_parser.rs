@@ -17,7 +17,7 @@ impl Parser {
     pub fn parse_str(&self, content: &str) -> Result<Document> {
         self.parse_bytes(content.as_bytes())
     }
-    
+
     pub fn parse_file<P: AsRef<Path>>(&self, path: P) -> Result<Document> {
         let content = std::fs::read(path)?;
         self.parse_bytes(&content)

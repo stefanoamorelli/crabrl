@@ -5,7 +5,7 @@ use std::path::Path;
 fn parse_sample_sec_file(c: &mut Criterion) {
     let parser = Parser::new();
     let sample_file = Path::new("fixtures/sample-sec.xml");
-    
+
     if sample_file.exists() {
         c.bench_function("parse_sample_sec", |b| {
             b.iter(|| parser.parse_file(black_box(&sample_file)));
@@ -26,7 +26,7 @@ fn parse_sample_sec_file(c: &mut Criterion) {
     <measure>iso4217:USD</measure>
   </unit>
 </xbrl>"#;
-        
+
         c.bench_function("parse_minimal", |b| {
             b.iter(|| parser.parse_str(black_box(minimal_xbrl)));
         });
