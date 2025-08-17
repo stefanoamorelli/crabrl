@@ -7,7 +7,23 @@
 [![Downloads](https://img.shields.io/crates/d/crabrl.svg)](https://crates.io/crates/crabrl)
 [![docs.rs](https://docs.rs/crabrl/badge.svg)](https://docs.rs/crabrl)
 
+![crabrl Performance](benchmarks/header.png)
+
 Lightning-fast XBRL parser that's **50-150x faster** than traditional parsers, built for speed and accuracy when processing [SEC EDGAR](https://www.sec.gov/edgar) filings.
+
+## Performance
+
+![Performance Benchmarks](benchmarks/performance_charts.png)
+
+### Speed Comparison
+
+![Speed Comparison](benchmarks/speed_comparison_clean.png)
+
+**Key Performance Metrics:**
+- **50-150x faster** than traditional XBRL parsers
+- **140,000+ facts/second** throughput
+- **< 50MB memory** for 100K facts
+- **Linear scaling** with file size
 
 ## Technical Architecture
 
